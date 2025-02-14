@@ -12,7 +12,7 @@ const client = new MongoClient(uri, {
   },
 });
 
-export async function connect() {
+async function connect() {
   try {
     await client.connect();
     console.log("Connected to the database");
@@ -21,7 +21,7 @@ export async function connect() {
   }
 }
 
-export async function disconnect() {
+async function disconnect() {
   try {
     await client.close();
     console.log("Disconnected from the database");
