@@ -17,12 +17,13 @@ export default function SecretPage() {
   const [scoreboard, setScoreboard] = useState<Score[]>([]);
   const [lastClick, setLastClick] = useState(0);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [tempScore, setTempScore] = useState<number>(0);
 
   const getSecret = async () => {
     try {
-      const response = await axios.get<{ otp: string }>("/api/otpgenerator");
-      setSecret(response.data.otp);
-      const encryptedSecret = btoa(response.data.otp);
+      const response = await axios.get<{ code: string }>("/api/mongoDB");
+      setSecret(response.data.code);
+      const encryptedSecret = btoa(response.data.code);
       localStorage.setItem("secret", encryptedSecret);
     } catch (error) {
       console.error(error);
@@ -53,10 +54,12 @@ export default function SecretPage() {
     timeoutRef.current = setTimeout(async () => {
       try {
         await axios.post("/api/pusher", {
-          name: "POP",
-          score: click,
+          name: name,
+          score: tempScore,
+        }).then((res) => {
+          console.log(res);
         });
-        console.log("Score updated:", click);
+        console.log("Score updated (time):", tempScore);
       } catch (error) {
         console.error("Update error:", error);
       }
@@ -67,7 +70,7 @@ export default function SecretPage() {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [click]); 
+  }, [click, tempScore]); 
 
   const handleClick = () => {
     const now = Date.now();
@@ -123,12 +126,14 @@ export default function SecretPage() {
           onMouseDown={() => {
             setIsMouseDown(true);
             setClick((prev) => prev + 1);
+            setTempScore((prev) => prev + 1);
             handleClick();
           }}
           onMouseUp={() => setIsMouseDown(false)}
           onTouchStart={() => {
             setIsMouseDown(true);
             setClick((prev) => prev + 1);
+            setTempScore((prev) => prev + 1);
             handleClick();
           }}
           onTouchEnd={() => setIsMouseDown(false)}

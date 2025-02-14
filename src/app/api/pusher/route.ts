@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     const existingEntry = scoreboard.find((entry) => entry.name === name);
 
     if (existingEntry) {
-      existingEntry.score = score;
+      existingEntry.score += score;
     } else {
       scoreboard.push({ name, score });
     }
