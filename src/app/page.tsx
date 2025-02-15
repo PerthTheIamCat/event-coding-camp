@@ -36,7 +36,7 @@ interface Score {
 
 let audioContext: AudioContext | null = null;
 let audioBuffer: AudioBuffer | null = null;
-const targetScore = 10;
+const targetScore = 3000;
 
 const loadAudio = async () => {
   audioContext = new window.AudioContext();
