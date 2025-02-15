@@ -224,8 +224,8 @@ export default function SecretPage() {
               เลือก
             </option>
             <option value="วิศวกรรมศาสตร์">วิศวกรรมศาสตร์</option>
-            <option value="วืทยาการจัดการ">วืทยาการจัดการ</option>
-            <option value="วืทยาศาสตร์">วืทยาศาสตร์</option>
+            <option value="วืทยาการจัดการ">วิทยาการจัดการ</option>
+            <option value="วืทยาศาสตร์">วิทยาศาสตร์</option>
             <option value="เศรษฐศาสตร์">เศรษฐศาสตร์</option>
             <option value="พาณิชยนาวีนานาชาติ">พาณิชยนาวีนานาชาติ</option>
           </select>
