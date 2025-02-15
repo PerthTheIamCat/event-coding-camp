@@ -40,7 +40,7 @@ const targetScore = 10;
 
 const loadAudio = async () => {
   audioContext = new window.AudioContext();
-  const response = await fetch("/sound.mp3");
+  const response = await fetch("/bg.mp3");
   const arrayBuffer = await response.arrayBuffer();
   audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 };
@@ -129,7 +129,7 @@ export default function SecretPage() {
     const source = audioContext.createBufferSource();
     source.buffer = audioBuffer;
     source.connect(audioContext.destination);
-    source.start(0, 0.5, 0.5);
+    source.start(1.25, 1.75, 0.5);
   };
 
   const getSecret = async () => {
