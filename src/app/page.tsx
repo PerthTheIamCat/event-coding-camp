@@ -28,6 +28,7 @@ import Image from "next/image";
 import axios from "axios";
 import React, { useState, useEffect, useRef } from "react";
 import Pusher from "pusher-js";
+import Link from "next/link";
 
 interface Score {
   name: string;
@@ -59,6 +60,9 @@ export default function SecretPage() {
   const [tempScore, setTempScore] = useState<number>(0);
   const [isRedeemed, setIsRedeemed] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [buttonPosition, setButtonPosition] = useState({ x: 0, y: 0 });
+  const [buttonTrickCount, setButtonTrickCount] = useState(0);
+  const [showGetSecret, setShowGetSecret] = useState(false);
 
   const [name, setName] = useState<string>("");
 
@@ -169,6 +173,30 @@ export default function SecretPage() {
       setIsAngry(false);
     }
   };
+  const handleButtonTrick = () => {
+    if (buttonTrickCount < 5) {
+      console.log("Trick count:", buttonTrickCount);
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+      setButtonPosition((prev) => {
+        const newX = Math.min(
+          Math.max(prev.x + (Math.random() * 200 - 100), -screenWidth / 2 + 50),
+          screenWidth / 2 - 50
+        );
+        const newY = Math.min(
+          Math.max(prev.y + (Math.random() * 200 - 100), -screenHeight / 2 + 50),
+          screenHeight / 2 - 50
+        );
+        return { x: newX, y: newY };
+      });
+      setButtonTrickCount(buttonTrickCount + 1);
+    } else {
+      setSecret("Loading...");
+      getSecret();
+      setShowSecret(true);
+      setShowGetSecret(false);
+    }
+  };
 
   const handleRedeem = async () => {
     setLoading(true);
@@ -190,11 +218,9 @@ export default function SecretPage() {
   useEffect(() => {
     if (click > targetScore && !secret) {
       // console.log("Click:", click);
-      setSecret("Loading...");
-      getSecret();
-      setShowSecret(true);
+      setShowGetSecret(true);
     }
-  }, [click, secret]);
+  }, [click, secret, buttonTrickCount, showGetSecret]);
 
   return (
     <div className="h-screen w-screen flex flex-col justify-center items-center relative overflow-hidden">
@@ -288,10 +314,49 @@ export default function SecretPage() {
           ))}
         </ol>
       </div>
+      {
+        showGetSecret && (
+          <div>
+            <button
+              className="getSecretButton absolute top-auto right-auto bg-black bg-opacity-50 p-3 rounded text-white text-sm sm:text-lg"
+              onClick={handleButtonTrick}
+            >
+              Get Secret
+            </button>
+            <style jsx>{`
+              .getSecretButton {
+                transform: translate(${buttonPosition.x}px, ${buttonPosition.y}px);
+              }
+            `}</style>
+          </div>
+        )
+      }
       {showSecret && (
         <div className="absolute bottom-5 bg-black bg-opacity-50 p-3 rounded text-white text-lg">
-          <h1>นำโค้ดไปกรอกที่</h1>
-          <h1>Code: {secret}</h1>
+          <h1>
+            นำโค้ดไปกรอกที่{" "}
+            <Link
+              className="underline underline-offset-1"
+              target="_blank"
+              href={"https://www.eventpop.me/e/77908#event-tickets"}
+            >
+              Event Pop
+            </Link>
+          </h1>
+          <h1>
+            Code:{" "}
+            <span
+              onClick={() => {
+                if (secret) {
+                  navigator.clipboard.writeText(secret);
+                  alert(`Copied secret: ${secret}`);
+                }
+              }}
+            >
+              {secret}
+            </span>
+          </h1>
+
           <button
             className={`${
               isRedeemed ? "bg-red-500" : "bg-green-500"
@@ -305,7 +370,6 @@ export default function SecretPage() {
           </button>
         </div>
       )}
-      
     </div>
   );
 }
